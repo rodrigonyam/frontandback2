@@ -1,1 +1,53 @@
-import React, { useState } from 'react';\nimport {\n  AppBar,\n  Toolbar,\n  Typography,\n  Button,\n  Box,\n  IconButton,\n  Menu,\n  MenuItem,\n  Drawer,\n  List,\n  ListItem,\n  ListItemIcon,\n  ListItemText,\n  useTheme,\n  useMediaQuery,\n  Avatar,\n} from '@mui/material';\nimport {\n  Menu as MenuIcon,\n  Flight,\n  Hotel,\n  DirectionsCar,\n  Restaurant,\n  Dashboard,\n  BookOnline,\n  Person,\n  Logout,\n  Login,\n  PersonAdd,\n} from '@mui/icons-material';\nimport { Link, useNavigate, useLocation } from 'react-router-dom';\nimport { useAuth } from '../../contexts/AuthContext';\n\nconst Navbar: React.FC = () => {\n  const theme = useTheme();\n  const isMobile = useMediaQuery(theme.breakpoints.down('md'));\n  const { user, isAuthenticated, logout } = useAuth();\n  const navigate = useNavigate();\n  const location = useLocation();\n\n  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);\n  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);\n\n  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {\n    setAnchorEl(event.currentTarget);\n  };\n\n  const handleProfileMenuClose = () => {\n    setAnchorEl(null);\n  };\n\n  const handleLogout = () => {\n    logout();\n    handleProfileMenuClose();\n    navigate('/');\n  };\n\n  const toggleMobileMenu = () => {\n    setMobileMenuOpen(!mobileMenuOpen);\n  };\n\n  const navItems = [\n    { label: 'Flights', icon: <Flight />, path: '/flights' },\n    { label: 'Hotels', icon: <Hotel />, path: '/hotels' },\n    { label: 'Cars', icon: <DirectionsCar />, path: '/cars' },\n    { label: 'Restaurants', icon: <Restaurant />, path: '/restaurants' },\n  ];\n\n  const userMenuItems = isAuthenticated\n    ? [\n        { label: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },\n        { label: 'My Bookings', icon: <BookOnline />, path: '/bookings' },\n        { label: 'Profile', icon: <Person />, path: '/profile' },\n      ]\n    : [];\n\n  const renderDesktopMenu = () => (\n    <>\n      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>>\n        {navItems.map((item) => (\n          <Button\n            key={item.path}\n            color=\"inherit\"\n            component={Link}\n            to={item.path}\n            startIcon={item.icon}\n            sx={{\n              backgroundColor:\n                location.pathname === item.path\n                  ? 'rgba(255, 255, 255, 0.1)'\n                  : 'transparent',\n            }}\n          >\n            {item.label}\n          </Button>\n        ))}\n      </Box>\n\n      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>>\n        {isAuthenticated ? (\n          <>\n            <IconButton\n              onClick={handleProfileMenuOpen}\n              sx={{ color: 'white' }}\n            >\n              <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>>\n                {user?.firstName?.charAt(0) || 'U'}\n              </Avatar>\n            </IconButton>\n            <Menu\n              anchorEl={anchorEl}\n              open={Boolean(anchorEl)}\n              onClose={handleProfileMenuClose}\n              transformOrigin={{ horizontal: 'right', vertical: 'top' }}\n              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}\n            >\n              <MenuItem\n                onClick={() => {\n                  navigate('/dashboard');\n                  handleProfileMenuClose();\n                }}\n              >\n                <Dashboard sx={{ mr: 1 }} /> Dashboard\n              </MenuItem>\n              <MenuItem\n                onClick={() => {\n                  navigate('/bookings');\n                  handleProfileMenuClose();\n                }}\n              >\n                <BookOnline sx={{ mr: 1 }} /> My Bookings\n              </MenuItem>\n              <MenuItem\n                onClick={() => {\n                  navigate('/profile');\n                  handleProfileMenuClose();\n                }}\n              >\n                <Person sx={{ mr: 1 }} /> Profile\n              </MenuItem>\n              <MenuItem onClick={handleLogout}>\n                <Logout sx={{ mr: 1 }} /> Logout\n              </MenuItem>\n            </Menu>\n          </>\n        ) : (\n          <>\n            <Button\n              color=\"inherit\"\n              component={Link}\n              to=\"/login\"\n              startIcon={<Login />}\n            >\n              Login\n            </Button>\n            <Button\n              color=\"inherit\"\n              component={Link}\n              to=\"/register\"\n              startIcon={<PersonAdd />}\n              variant=\"outlined\"\n              sx={{\n                borderColor: 'white',\n                '&:hover': {\n                  borderColor: 'white',\n                  backgroundColor: 'rgba(255, 255, 255, 0.1)',\n                },\n              }}\n            >\n              Sign Up\n            </Button>\n          </>\n        )}\n      </Box>\n    </>\n  );\n\n  const renderMobileMenu = () => (\n    <Drawer\n      anchor=\"left\"\n      open={mobileMenuOpen}\n      onClose={toggleMobileMenu}\n    >\n      <List sx={{ width: 250, pt: 2 }}>>\n        {navItems.map((item) => (\n          <ListItem\n            key={item.path}\n            component={Link}\n            to={item.path}\n            onClick={toggleMobileMenu}\n            sx={{\n              backgroundColor:\n                location.pathname === item.path\n                  ? 'rgba(33, 150, 243, 0.1)'\n                  : 'transparent',\n            }}\n          >\n            <ListItemIcon>{item.icon}</ListItemIcon>\n            <ListItemText primary={item.label} />\n          </ListItem>\n        ))}\n        \n        {isAuthenticated && (\n          <>\n            <Box sx={{ my: 1, borderTop: 1, borderColor: 'divider' }} />\n            {userMenuItems.map((item) => (\n              <ListItem\n                key={item.path}\n                component={Link}\n                to={item.path}\n                onClick={toggleMobileMenu}\n              >\n                <ListItemIcon>{item.icon}</ListItemIcon>\n                <ListItemText primary={item.label} />\n              </ListItem>\n            ))}\n            <ListItem onClick={handleLogout}>\n              <ListItemIcon>\n                <Logout />\n              </ListItemIcon>\n              <ListItemText primary=\"Logout\" />\n            </ListItem>\n          </>\n        )}\n\n        {!isAuthenticated && (\n          <>\n            <Box sx={{ my: 1, borderTop: 1, borderColor: 'divider' }} />\n            <ListItem component={Link} to=\"/login\" onClick={toggleMobileMenu}>\n              <ListItemIcon>\n                <Login />\n              </ListItemIcon>\n              <ListItemText primary=\"Login\" />\n            </ListItem>\n            <ListItem component={Link} to=\"/register\" onClick={toggleMobileMenu}>\n              <ListItemIcon>\n                <PersonAdd />\n              </ListItemIcon>\n              <ListItemText primary=\"Sign Up\" />\n            </ListItem>\n          </>\n        )}\n      </List>\n    </Drawer>\n  );\n\n  return (\n    <AppBar position=\"fixed\" elevation={2}>\n      <Toolbar sx={{ justifyContent: 'space-between' }}>>\n        <Box sx={{ display: 'flex', alignItems: 'center' }}>>\n          {isMobile && (\n            <IconButton\n              color=\"inherit\"\n              onClick={toggleMobileMenu}\n              sx={{ mr: 2 }}\n            >\n              <MenuIcon />\n            </IconButton>\n          )}\n          <Typography\n            variant=\"h6\"\n            component={Link}\n            to=\"/\"\n            sx={{\n              textDecoration: 'none',\n              color: 'inherit',\n              fontWeight: 700,\n              fontSize: { xs: '1.1rem', md: '1.25rem' },\n            }}\n          >\n            TravelBooker\n          </Typography>\n        </Box>\n\n        {!isMobile && renderDesktopMenu()}\n        {isMobile && renderMobileMenu()}\n      </Toolbar>\n    </AppBar>\n  );\n};\n\nexport default Navbar;
+import React from 'react';
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+
+const Navbar: React.FC = () => {
+  const { isAuthenticated, logout } = useAuth();
+
+  return (
+    <AppBar position="fixed">
+      <Toolbar>
+        <Typography variant="h6" component={Link} to="/" sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}>
+          TravelBooker
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button color="inherit" component={Link} to="/flights">
+            Flights
+          </Button>
+          <Button color="inherit" component={Link} to="/hotels">
+            Hotels
+          </Button>
+          <Button color="inherit" component={Link} to="/cars">
+            Cars
+          </Button>
+          <Button color="inherit" component={Link} to="/restaurants">
+            Restaurants
+          </Button>
+          {isAuthenticated ? (
+            <>
+              <Button color="inherit" component={Link} to="/dashboard">
+                Dashboard
+              </Button>
+              <Button color="inherit" onClick={logout}>
+                Logout
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button color="inherit" component={Link} to="/login">
+                Login
+              </Button>
+              <Button color="inherit" component={Link} to="/register">
+                Register
+              </Button>
+            </>
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
+  );
+};
+
+export default Navbar;

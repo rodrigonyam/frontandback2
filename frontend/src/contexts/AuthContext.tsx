@@ -72,7 +72,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (token) {
         try {
           const response = await authAPI.getCurrentUser();
-          dispatch({ type: 'LOGIN_SUCCESS', payload: response.data.user });
+          const payload = response.data.data;
+          if (payload?.user) {
+            dispatch({ type: 'LOGIN_SUCCESS', payload: payload.user });
+          } else {
+            throw new Error('Invalid auth response');
+          }
         } catch (error) {
           // Token is invalid, remove it
           localStorage.removeItem('token');
@@ -90,7 +95,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       dispatch({ type: 'LOADING', payload: true });
       const response = await authAPI.login({ email, password });
-      const { user, token } = response.data;
+      const payload = response.data.data;
+      if (!payload?.user || !payload?.token) {
+        throw new Error('Invalid login response');
+      }
+      const { user, token } = payload;
       
       localStorage.setItem('token', token);
       dispatch({ type: 'LOGIN_SUCCESS', payload: user });
@@ -104,7 +113,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       dispatch({ type: 'LOADING', payload: true });
       const response = await authAPI.register(userData);
-      const { user, token } = response.data;
+      const payload = response.data.data;
+      if (!payload?.user || !payload?.token) {
+        throw new Error('Invalid register response');
+      }
+      const { user, token } = payload;
       
       localStorage.setItem('token', token);
       dispatch({ type: 'LOGIN_SUCCESS', payload: user });

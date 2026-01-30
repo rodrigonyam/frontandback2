@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { sign, type Secret, type SignOptions } from 'jsonwebtoken';
 import { IUser } from '../types';
 
 const UserSchema = new Schema<IUser>({
@@ -99,16 +99,21 @@ UserSchema.methods.comparePassword = async function (enteredPassword: string): P
 
 // Generate JWT token
 UserSchema.methods.getSignedJwtToken = function (): string {
-  return jwt.sign(
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET is not set');
+  }
+
+  const expiresIn: SignOptions['expiresIn'] = (process.env.JWT_EXPIRE ?? '30d') as any;
+
+  return sign(
     { 
       userId: this._id, 
       email: this.email, 
       role: this.role 
     },
-    process.env.JWT_SECRET!,
-    {
-      expiresIn: process.env.JWT_EXPIRE || '30d',
-    }
+    secret as Secret,
+    { expiresIn }
   );
 };
 

@@ -27,20 +27,20 @@ function App() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      <Box component=\"main\" sx={{ flexGrow: 1, pt: 8 }}>
+      <Box component="main" sx={{ flexGrow: 1, pt: 8 }}>
         <Routes>
           {/* Public Routes */}
-          <Route path=\"/\" element={<HomePage />} />
-          <Route path=\"/login\" element={<LoginPage />} />
-          <Route path=\"/register\" element={<RegisterPage />} />
-          <Route path=\"/flights\" element={<FlightsPage />} />
-          <Route path=\"/hotels\" element={<HotelsPage />} />
-          <Route path=\"/cars\" element={<CarsPage />} />
-          <Route path=\"/restaurants\" element={<RestaurantsPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/flights" element={<FlightsPage />} />
+          <Route path="/hotels" element={<HotelsPage />} />
+          <Route path="/cars" element={<CarsPage />} />
+          <Route path="/restaurants" element={<RestaurantsPage />} />
 
           {/* Protected Routes */}
           <Route
-            path=\"/dashboard\"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardPage />
@@ -48,7 +48,7 @@ function App() {
             }
           />
           <Route
-            path=\"/bookings\"
+            path="/bookings"
             element={
               <ProtectedRoute>
                 <BookingsPage />
@@ -56,7 +56,7 @@ function App() {
             }
           />
           <Route
-            path=\"/profile\"
+            path="/profile"
             element={
               <ProtectedRoute>
                 <ProfilePage />
@@ -65,7 +65,7 @@ function App() {
           />
 
           {/* Catch all route */}
-          <Route path=\"*\" element={<Navigate to=\"/\" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Box>
       <Footer />

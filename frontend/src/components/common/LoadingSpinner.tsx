@@ -12,15 +12,15 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 }) => {
   return (
     <Box
-      display=\"flex\"
-      flexDirection=\"column\"
-      alignItems=\"center\"
-      justifyContent=\"center\"
-      minHeight=\"400px\"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      minHeight="400px"
       gap={2}
     >
       <CircularProgress size={size} />
-      <Typography variant=\"body2\" color=\"textSecondary\">
+      <Typography variant="body2" color="textSecondary">
         {message}
       </Typography>
     </Box>
