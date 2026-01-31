@@ -199,25 +199,25 @@ export interface LoginData {
 }
 
 export interface FlightSearchParams {
-  origin: string;
-  destination: string;
-  departureDate: string;
+  origin?: string;
+  destination?: string;
+  departureDate?: string;
   returnDate?: string;
-  passengers: number;
-  class: 'economy' | 'business' | 'first';
+  passengers?: number;
+  class?: 'economy' | 'business' | 'first';
 }
 
 export interface HotelSearchParams {
-  destination: string;
-  checkIn: string;
-  checkOut: string;
-  guests: number;
-  rooms: number;
+  destination?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: number;
+  rooms?: number;
 }
 
 export interface CarSearchParams {
-  pickupLocation: string;
-  dropoffLocation: string;
-  pickupDate: string;
-  dropoffDate: string;
+  pickupLocation?: string;
+  dropoffLocation?: string;
+  pickupDate?: string;
+  dropoffDate?: string;
 }

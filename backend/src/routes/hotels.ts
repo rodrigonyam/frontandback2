@@ -89,9 +89,9 @@ const mockHotels: IHotel[] = [
  * @access  Public
  */
 router.get('/search', [
-  query('destination').notEmpty().withMessage('Destination is required'),
-  query('checkIn').isISO8601().withMessage('Valid check-in date is required'),
-  query('checkOut').isISO8601().withMessage('Valid check-out date is required'),
+  query('destination').optional().isString(),
+  query('checkIn').optional().isISO8601().withMessage('Valid check-in date is required when provided'),
+  query('checkOut').optional().isISO8601().withMessage('Valid check-out date is required when provided'),
   query('guests').optional().isInt({ min: 1, max: 20 }).withMessage('Guests must be between 1 and 20'),
   query('rooms').optional().isInt({ min: 1, max: 10 }).withMessage('Rooms must be between 1 and 10'),
 ], optionalAuth, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
@@ -118,9 +118,10 @@ router.get('/search', [
     } = req.query;
 
     let hotels = mockHotels.filter(hotel => {
-      const matchesDestination = 
-        hotel.location.city.toLowerCase().includes((destination as string).toLowerCase()) ||
-        hotel.location.country.toLowerCase().includes((destination as string).toLowerCase());
+      const matchesDestination = destination
+        ? hotel.location.city.toLowerCase().includes((destination as string).toLowerCase()) ||
+          hotel.location.country.toLowerCase().includes((destination as string).toLowerCase())
+        : true;
       
       let matchesPrice = true;
       if (minPrice) matchesPrice = hotel.pricePerNight >= parseFloat(minPrice as string);
@@ -280,6 +281,37 @@ router.post('/book', authenticate, [
     res.status(500).json({
       status: 'error',
       message: 'Error booking hotel',
+    });
+  }
+}));
+
+/**
+ * @route   GET /api/hotels/:id
+ * @desc    Get hotel details by ID
+ * @access  Public
+ */
+router.get('/:id', optionalAuth, asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const hotel = mockHotels.find(h => h.id === id);
+
+    if (!hotel) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Hotel not found',
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: { hotel },
+    });
+  } catch (error) {
+    console.error('Hotel detail error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Error fetching hotel details',
     });
   }
 }));

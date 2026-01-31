@@ -81,10 +81,10 @@ const mockCars: ICar[] = [
  * @access  Public
  */
 router.get('/search', [
-  query('pickupLocation').notEmpty().withMessage('Pickup location is required'),
-  query('dropoffLocation').notEmpty().withMessage('Dropoff location is required'),
-  query('pickupDate').isISO8601().withMessage('Valid pickup date is required'),
-  query('dropoffDate').isISO8601().withMessage('Valid dropoff date is required'),
+  query('pickupLocation').optional().isString(),
+  query('dropoffLocation').optional().isString(),
+  query('pickupDate').optional().isISO8601().withMessage('Valid pickup date is required when provided'),
+  query('dropoffDate').optional().isISO8601().withMessage('Valid dropoff date is required when provided'),
 ], optionalAuth, asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -108,8 +108,9 @@ router.get('/search', [
     } = req.query;
 
     let cars = mockCars.filter(car => {
-      const matchesLocation = 
-        car.pickupLocation.toLowerCase().includes((pickupLocation as string).toLowerCase());
+      const matchesLocation = pickupLocation
+        ? car.pickupLocation.toLowerCase().includes((pickupLocation as string).toLowerCase())
+        : true;
       
       let matchesCategory = true;
       if (category) matchesCategory = car.category === category;
@@ -253,6 +254,37 @@ router.post('/book', authenticate, [
     res.status(500).json({
       status: 'error',
       message: 'Error booking car',
+    });
+  }
+}));
+
+/**
+ * @route   GET /api/cars/:id
+ * @desc    Get car details by ID
+ * @access  Public
+ */
+router.get('/:id', optionalAuth, asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const car = mockCars.find(c => c.id === id);
+
+    if (!car) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Car not found',
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: { car },
+    });
+  } catch (error) {
+    console.error('Car detail error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Error fetching car details',
     });
   }
 }));

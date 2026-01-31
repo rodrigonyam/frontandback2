@@ -20,24 +20,25 @@ import userRoutes from './routes/users';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+// Default to 5050 because macOS Control Center often binds to 5000
+const PORT = process.env.PORT || 5050;
 
 // Connect to database
 connectDB();
 
 // Security middleware
-app.use(helmet());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? ['https://yourdomain.com']
     : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
   credentials: true,
 }));
+app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 1000, // limit each IP to 1000 requests per windowMs (higher for dev)
   message: 'Too many requests from this IP, please try again later.',
 });
 app.use(limiter);

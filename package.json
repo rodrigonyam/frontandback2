@@ -4,6 +4,7 @@
   "description": "A comprehensive travel booking platform with flight, hotel, car rental, and restaurant suggestions",
   "scripts": {
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:local": "concurrently \"PORT=5050 npm run dev:backend\" \"REACT_APP_API_URL=http://localhost:5050/api npm run dev:frontend\"",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm start",
     "build": "npm run build:backend && npm run build:frontend",

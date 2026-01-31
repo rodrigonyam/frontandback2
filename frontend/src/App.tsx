@@ -7,8 +7,11 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import FlightsPage from './pages/FlightsPage';
+import FlightDetailPage from './pages/FlightDetailPage';
 import HotelsPage from './pages/HotelsPage';
+import HotelDetailPage from './pages/HotelDetailPage';
 import CarsPage from './pages/CarsPage';
+import CarDetailPage from './pages/CarDetailPage';
 import RestaurantsPage from './pages/RestaurantsPage';
 import BookingsPage from './pages/BookingsPage';
 import ProfilePage from './pages/ProfilePage';
@@ -34,8 +37,11 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/flights" element={<FlightsPage />} />
+          <Route path="/flights/:id" element={<FlightDetailPage />} />
           <Route path="/hotels" element={<HotelsPage />} />
+          <Route path="/hotels/:id" element={<HotelDetailPage />} />
           <Route path="/cars" element={<CarsPage />} />
+          <Route path="/cars/:id" element={<CarDetailPage />} />
           <Route path="/restaurants" element={<RestaurantsPage />} />
 
           {/* Protected Routes */}

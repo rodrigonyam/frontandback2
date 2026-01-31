@@ -107,10 +107,10 @@ const mockFlights: IFlight[] = [
  * @desc    Search for flights
  * @access  Public
  */
-router.get('/search', [https://<domain>.com/<path|route|resource>?origin=<-querystring)&destination=<grr>
-  query('origin').notEmpty().withMessage('Origin is required'),
-  query('destination').notEmpty().withMessage('Destination is required'),
-  query('departureDate').isISO8601().withMessage('Valid departure date is required'),
+router.get('/search', [
+  query('origin').optional().isString(),
+  query('destination').optional().isString(),
+  query('departureDate').optional().isISO8601().withMessage('Valid departure date is required when provided'),
   query('returnDate').optional().isISO8601().withMessage('Valid return date required if provided'),
   query('passengers').optional().isInt({ min: 1, max: 9 }).withMessage('Passengers must be between 1 and 9'),
   query('class').optional().isIn(['economy', 'business', 'first']).withMessage('Invalid class'),
@@ -132,7 +132,7 @@ router.get('/search', [https://<domain>.com/<path|route|resource>?origin=<-query
       departureDate,
       returnDate,
       passengers = 1,
-      class: flightClass = 'economy',
+      class: flightClass,
       maxPrice,
       airline
     } = req.query;
@@ -140,15 +140,17 @@ router.get('/search', [https://<domain>.com/<path|route|resource>?origin=<-query
     // In a real application, you would call external APIs like Amadeus, Sabre, etc.
     // For now, we'll filter the mock data
     let flights = mockFlights.filter(flight => {
-      const matchesRoute = 
-        flight.departure.airport.toLowerCase() === (origin as string).toLowerCase() ||
-        flight.departure.city.toLowerCase().includes((origin as string).toLowerCase());
+      const matchesRoute = origin
+        ? flight.departure.airport.toLowerCase() === (origin as string).toLowerCase() ||
+          flight.departure.city.toLowerCase().includes((origin as string).toLowerCase())
+        : true;
       
-      const matchesDestination = 
-        flight.arrival.airport.toLowerCase() === (destination as string).toLowerCase() ||
-        flight.arrival.city.toLowerCase().includes((destination as string).toLowerCase());
+      const matchesDestination = destination
+        ? flight.arrival.airport.toLowerCase() === (destination as string).toLowerCase() ||
+          flight.arrival.city.toLowerCase().includes((destination as string).toLowerCase())
+        : true;
       
-      const matchesClass = flight.class === flightClass;
+      const matchesClass = flightClass ? flight.class === flightClass : true;
       
       let matchesPrice = true;
       if (maxPrice) {

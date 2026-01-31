@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography, Box, Paper, Grid } from '@mui/material';
+import { Container, Typography, Paper, Grid } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
 
 const ProfilePage: React.FC = () => {

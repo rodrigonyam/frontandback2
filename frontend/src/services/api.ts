@@ -14,7 +14,8 @@ import {
   CarSearchParams,
 } from '../types';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Default to 5050 to match backend default and avoid macOS Control Center on 5000
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5050/api';
 
 // Create axios instance
 const api = axios.create({
@@ -82,6 +83,9 @@ export const flightsAPI = {
 export const hotelsAPI = {
   search: (params: HotelSearchParams & { page?: number; limit?: number; minPrice?: number; maxPrice?: number; rating?: number; amenities?: string }): Promise<AxiosResponse<ApiResponse<{ hotels: Hotel[]; searchParams: any }>>> =>
     api.get('/hotels/search', { params }),
+
+  getById: (id: string): Promise<AxiosResponse<ApiResponse<{ hotel: Hotel }>>> =>
+    api.get(`/hotels/${id}`),
   
   book: (data: any): Promise<AxiosResponse<ApiResponse<{ booking: Booking }>>> =>
     api.post('/hotels/book', data),
@@ -89,8 +93,11 @@ export const hotelsAPI = {
 
 // Cars API
 export const carsAPI = {
-  search: (params: CarSearchParams & { page?: number; limit?: number; category?: string; transmission?: string; minPrice?: number; maxPrice?: number }): Promise<AxiosResponse<ApiResponse<{ cars: Car[]; searchParams: any }>>> =>
+  search: (params: Partial<CarSearchParams> & { page?: number; limit?: number; category?: string; transmission?: string; minPrice?: number; maxPrice?: number }): Promise<AxiosResponse<ApiResponse<{ cars: Car[]; searchParams: any }>>> =>
     api.get('/cars/search', { params }),
+
+  getById: (id: string): Promise<AxiosResponse<ApiResponse<{ car: Car }>>> =>
+    api.get(`/cars/${id}`),
   
   book: (data: any): Promise<AxiosResponse<ApiResponse<{ booking: Booking }>>> =>
     api.post('/cars/book', data),
