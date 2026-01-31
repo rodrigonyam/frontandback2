@@ -26,13 +26,12 @@
     "web-vitals": "^3.5.0"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "set NODE_OPTIONS=--no-deprecation && craco start",
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
-    "start:windows": "set SUPPRESS_NODE_WARNINGS=1 && craco start"
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
   },
   "eslintConfig": {
     "extends": [

@@ -42,7 +42,6 @@ const BookingSchema = new Schema<any>({
 
 // Indexes for faster queries
 BookingSchema.index({ user: 1, createdAt: -1 });
-BookingSchema.index({ bookingReference: 1 });
 BookingSchema.index({ type: 1, status: 1 });
 
 // Generate booking reference before saving

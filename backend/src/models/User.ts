@@ -74,9 +74,6 @@ const UserSchema = new Schema<IUser>({
   timestamps: true,
 });
 
-// Index for faster queries
-UserSchema.index({ email: 1 });
-
 // Hash password before saving
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
